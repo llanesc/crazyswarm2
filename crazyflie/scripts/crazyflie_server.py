@@ -24,7 +24,7 @@ from cflib.crazyflie.log import LogConfig
 from crazyflie_interfaces.srv import Takeoff, Land, GoTo, RemoveLogging, AddLogging
 from crazyflie_interfaces.srv import UploadTrajectory, StartTrajectory, NotifySetpointsStop
 from rcl_interfaces.msg import ParameterDescriptor, SetParametersResult, ParameterType
-from crazyflie_interfaces.msg import Hover
+from crazyflie_interfaces.msg import Hover, AttitudeSetpoint
 from crazyflie_interfaces.msg import LogDataGeneric
 from motion_capture_tracking_interfaces.msg import NamedPoseArray
 
@@ -105,7 +105,7 @@ class CrazyflieServer(Node):
                     self.cf_dict[uri] = crazyflie
                     self.uri_dict[crazyflie] = uri
                     self.type_dict[uri] = type_cf
-
+        print(self.uris)
         # Setup Swarm class cflib with connection callbacks and open the links
         factory = CachedCfFactory(rw_cache="./cache")
         self.swarm = Swarm(self.uris, factory=factory)
@@ -243,10 +243,14 @@ class CrazyflieServer(Node):
                 "/cmd_vel_legacy", partial(self._cmd_vel_legacy_changed, uri=uri), 10
             )
             self.create_subscription(
+                AttitudeSetpoint, name +
+                "/cmd_attitude_setpoint", partial(self._cmd_attitude_setpoint_changed, uri=uri), 10
+            )
+            self.create_subscription(
                 Hover, name +
                 "/cmd_hover", partial(self._cmd_hover_changed, uri=uri), 10
             )
-            qos_profile = QoSProfile(reliability =QoSReliabilityPolicy.BEST_EFFORT,
+            qos_profile = QoSProfile(reliability=QoSReliabilityPolicy.BEST_EFFORT,
                 history=QoSHistoryPolicy.KEEP_LAST,
                 depth=1,
                 deadline = Duration(seconds=0, nanoseconds=1e9/100.0))
@@ -834,6 +838,10 @@ class CrazyflieServer(Node):
         self.swarm._cfs[uri].cf.commander.send_setpoint(
             roll, pitch, yawrate, thrust)
 
+    def _cmd_attitude_setpoint_changed(self, msg, uri=""):
+        self.swarm._cfs[uri].cf.commander.send_setpoint(
+                    msg.roll, msg.pitch, msg.yaw_rate, msg.thrust)
+        
     def _cmd_hover_changed(self, msg, uri=""):
         """
         Topic update callback to control the hover command

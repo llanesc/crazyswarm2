@@ -23,7 +23,7 @@ from geometry_msgs.msg import Point, Twist
 from rcl_interfaces.srv import GetParameters, SetParameters, ListParameters, DescribeParameters
 from rcl_interfaces.msg import Parameter, ParameterValue, ParameterType
 from crazyflie_interfaces.srv import Takeoff, Land, GoTo, UploadTrajectory, StartTrajectory, NotifySetpointsStop
-from crazyflie_interfaces.msg import TrajectoryPolynomialPiece, FullState, Position
+from crazyflie_interfaces.msg import TrajectoryPolynomialPiece, FullState, Position, AttitudeSetpoint
 
 def arrayToGeometryPoint(a):
     result = Point()
@@ -160,6 +160,9 @@ class Crazyflie:
         self.cmdPositionMsg = Position()
         self.cmdPositionMsg.header.frame_id = "/world"
 
+        self.cmdAttitudeSetpointPublisher = node.create_publisher(AttitudeSetpoint, prefix + "/cmd_attitude_setpoint", 1)
+        self.cmdAttitudeSetpointMsg = AttitudeSetpoint()
+        self.cmdAttitudeSetpointMsg.header.frame_id = "/world"
 
         # self.cmdVelocityWorldPublisher = rospy.Publisher(prefix + "/cmd_velocity_world", VelocityWorld, queue_size=1)
         # self.cmdVelocityWorldMsg = VelocityWorld()
@@ -615,6 +618,15 @@ class Crazyflie:
         self.cmdPositionMsg.z   = pos[2]
         self.cmdPositionMsg.yaw = yaw
         self.cmdPositionPublisher.publish(self.cmdPositionMsg)
+
+    def cmdAttitudeSetpoint(self, roll, pitch, yaw_rate, thrust):
+        self.cmdAttitudeSetpointMsg.header.stamp = self.node.get_clock().now().to_msg()
+        self.cmdAttitudeSetpointMsg.roll = roll
+        self.cmdAttitudeSetpointMsg.pitch = pitch
+        self.cmdAttitudeSetpointMsg.yaw_rate = yaw_rate
+        self.cmdAttitudeSetpointMsg.thrust = thrust
+        self.cmdAttitudeSetpointPublisher.publish(self.cmdAttitudeSetpointMsg)
+
 
     # def setLEDColor(self, r, g, b):
     #     """Sets the color of the LED ring deck.
