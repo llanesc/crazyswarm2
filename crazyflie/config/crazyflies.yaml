@@ -18,94 +18,94 @@ robots:
     type: cf_sim  # see robot_types
 
   cf_2:
-    enabled: false
+    enabled: true
     uri: udp://0.0.0.0:19851
     initial_position: [1.0, 0.0, 0.0]
     type: cf_sim  # see robot_types
 
   cf_3:
-    enabled: false
+    enabled: true
     uri: udp://0.0.0.0:19852
     initial_position: [0.0, 1.0, 0.0]
     type: cf_sim  # see robot_types
 
   cf_4:
-    enabled: false
+    enabled: true
     uri: udp://0.0.0.0:19853
     initial_position: [1.0, 1.0, 0.0]
     type: cf_sim  # see robot_types
 
-  cf_5:
-    enabled: false
-    uri: udp://0.0.0.0:19854
-    initial_position: [1.0, 4.0, 0.0]
-    type: cf_sim  # see robot_types
+  # cf_5:
+  #   enabled: true
+  #   uri: udp://0.0.0.0:19854
+  #   initial_position: [1.0, 4.0, 0.0]
+  #   type: cf_sim  # see robot_types
 
-  cf_6:
-    enabled: false
-    uri: udp://0.0.0.0:19855
-    initial_position: [1.0, 0.0, 0.0]
-    type: cf_sim  # see robot_types
+  # cf_6:
+  #   enabled: true
+  #   uri: udp://0.0.0.0:19855
+  #   initial_position: [1.0, 0.0, 0.0]
+  #   type: cf_sim  # see robot_types
 
-  cf_7:
-    enabled: false
-    uri: udp://0.0.0.0:19856
-    initial_position: [1.0, 1.0, 0.0]
-    type: cf_sim  # see robot_types
+  # cf_7:
+  #   enabled: true
+  #   uri: udp://0.0.0.0:19856
+  #   initial_position: [1.0, 1.0, 0.0]
+  #   type: cf_sim  # see robot_types
 
-  cf_8:
-    enabled: false
-    uri: udp://0.0.0.0:19857
-    initial_position: [1.0, 2.0, 0.0]
-    type: cf_sim  # see robot_types
+  # cf_8:
+  #   enabled: true
+  #   uri: udp://0.0.0.0:19857
+  #   initial_position: [1.0, 2.0, 0.0]
+  #   type: cf_sim  # see robot_types
 
-  cf_9:
-    enabled: false
-    uri: udp://0.0.0.0:19858
-    initial_position: [2.0, 3.0, 0.0]
-    type: cf_sim  # see robot_types
+  # cf_9:
+  #   enabled: true
+  #   uri: udp://0.0.0.0:19858
+  #   initial_position: [2.0, 3.0, 0.0]
+  #   type: cf_sim  # see robot_types
 
-  cf_10:
-    enabled: false
-    uri: udp://0.0.0.0:19859
-    initial_position: [2.0, 4.0, 0.0]
-    type: cf_sim  # see robot_types
+  # cf_10:
+  #   enabled: true
+  #   uri: udp://0.0.0.0:19859
+  #   initial_position: [2.0, 4.0, 0.0]
+  #   type: cf_sim  # see robot_types
 
-  cf_11:
-    enabled: false
-    uri: udp://0.0.0.0:19860
-    initial_position: [2.0, 0.0, 0.0]
-    type: cf_sim  # see robot_types
+  # cf_11:
+  #   enabled: true
+  #   uri: udp://0.0.0.0:19860
+  #   initial_position: [2.0, 0.0, 0.0]
+  #   type: cf_sim  # see robot_types
 
-  cf_12:
-    enabled: false
-    uri: udp://0.0.0.0:19861
-    initial_position: [2.0, 1.0, 0.0]
-    type: cf_sim  # see robot_types
+  # cf_12:
+  #   enabled: true
+  #   uri: udp://0.0.0.0:19861
+  #   initial_position: [2.0, 1.0, 0.0]
+  #   type: cf_sim  # see robot_types
 
-  cf_13:
-    enabled: false
-    uri: udp://0.0.0.0:19862
-    initial_position: [3.0, 2.0, 0.0]
-    type: cf_sim  # see robot_types
+  # cf_13:
+  #   enabled: true
+  #   uri: udp://0.0.0.0:19862
+  #   initial_position: [3.0, 2.0, 0.0]
+  #   type: cf_sim  # see robot_types
 
-  cf_14:
-    enabled: false
-    uri: udp://0.0.0.0:19863
-    initial_position: [3.0, 3.0, 0.0]
-    type: cf_sim  # see robot_types
+  # cf_14:
+  #   enabled: true
+  #   uri: udp://0.0.0.0:19863
+  #   initial_position: [3.0, 3.0, 0.0]
+  #   type: cf_sim  # see robot_types
 
-  cf_15:
-    enabled: false
-    uri: udp://0.0.0.0:19864
-    initial_position: [3.0, 4.0, 0.0]
-    type: cf_sim  # see robot_types
+  # cf_15:
+  #   enabled: true
+  #   uri: udp://0.0.0.0:19864
+  #   initial_position: [3.0, 4.0, 0.0]
+  #   type: cf_sim  # see robot_types
 
-  cf_16:
-    enabled: false
-    uri: udp://0.0.0.0:19865
-    initial_position: [3.0, 0.0, 0.0]
-    type: cf_sim  # see robot_types
+  # cf_16:
+  #   enabled: true
+  #   uri: udp://0.0.0.0:19865
+  #   initial_position: [3.0, 0.0, 0.0]
+  #   type: cf_sim  # see robot_types
 
   # cf_17:
   #   enabled: true
@@ -177,20 +177,12 @@ robot_types:
       enabled: true
       default_topics:
         pose:
-          frequency: 50
+          frequency: 100
       custom_topics:
-      #   position:
-      #     frequency: 50
-      #     vars: ["stateEstimate.x", "stateEstimate.y", "stateEstimate.z"]
         velocity:
-          frequency: 50
-          vars: ["stateEstimate.vx", "stateEstimate.vy", "stateEstimate.vz"]
-        attitude:
-          frequency: 50
-          vars: ["stateEstimate.roll", "stateEstimate.pitch", "stateEstimate.yaw"]
-        # pos_innov:
-        #   frequency: 50
-        #   vars: ["kalman.posInnoX", "kalman.posInnoY", "kalman.posInnoZ"]
+          frequency: 100
+          vars: ["kalman.statePX", "kalman.statePY", "kalman.statePZ"]
+
   cf:
     motion_capture:
       enabled: true
@@ -208,17 +200,11 @@ robot_types:
       enabled: true
       default_topics:
         pose:
-          frequency: 50
+          frequency: 100
       custom_topics:
-      #   position:
-      #     frequency: 50
-      #     vars: ["stateEstimate.x", "stateEstimate.y", "stateEstimate.z"]
         velocity:
-          frequency: 50
-          vars: ["stateEstimate.vx", "stateEstimate.vy", "stateEstimate.vz"]
-        attitude:
-          frequency: 50
-          vars: ["stateEstimate.roll", "stateEstimate.pitch", "stateEstimate.yaw"]
+          frequency: 100
+          vars: ["kalman.statePX", "kalman.statePY", "kalman.statePZ"]
 
   cf_mocap_deck:
     motion_capture:
@@ -262,6 +248,21 @@ all:
     stabilizer:
       estimator: 2 # 1: complementary, 2: kalman
       controller: 1 # 1: PID, 2: mellinger
+    # pid_attitude:
+    #   roll_kp: 10
+    #   roll_ki: 6.05
+    #   roll_kd: 0
+    #   pitch_kp: 10
+    #   pitch_ki: 6.05
+    #   pitch_kd: 0
+    # pid_rate:
+    #   roll_kp: 500
+    #   roll_ki: 500
+    #   roll_kd: 3.6
+    #   pitch_kp: 500
+    #   pitch_ki: 500
+    #   pitch_kd: 3.6
+      # rateFiltEn: 1
     # ring:
     #   effect: 16 # 6: double spinner, 7: solid color, 16: packetRate
     #   solidBlue: 255 # if set to solid color
