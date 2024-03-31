@@ -35,29 +35,29 @@ robots:
     initial_position: [1.0, 1.0, 0.0]
     type: cf_sim  # see robot_types
 
-  # cf_5:
-  #   enabled: true
-  #   uri: udp://0.0.0.0:19854
-  #   initial_position: [1.0, 4.0, 0.0]
-  #   type: cf_sim  # see robot_types
+  cf_5:
+    enabled: true
+    uri: udp://0.0.0.0:19854
+    initial_position: [1.0, 4.0, 0.0]
+    type: cf_sim  # see robot_types
 
-  # cf_6:
-  #   enabled: true
-  #   uri: udp://0.0.0.0:19855
-  #   initial_position: [1.0, 0.0, 0.0]
-  #   type: cf_sim  # see robot_types
+  cf_6:
+    enabled: true
+    uri: udp://0.0.0.0:19855
+    initial_position: [1.0, 0.0, 0.0]
+    type: cf_sim  # see robot_types
 
-  # cf_7:
-  #   enabled: true
-  #   uri: udp://0.0.0.0:19856
-  #   initial_position: [1.0, 1.0, 0.0]
-  #   type: cf_sim  # see robot_types
+  cf_7:
+    enabled: true
+    uri: udp://0.0.0.0:19856
+    initial_position: [1.0, 1.0, 0.0]
+    type: cf_sim  # see robot_types
 
-  # cf_8:
-  #   enabled: true
-  #   uri: udp://0.0.0.0:19857
-  #   initial_position: [1.0, 2.0, 0.0]
-  #   type: cf_sim  # see robot_types
+  cf_8:
+    enabled: true
+    uri: udp://0.0.0.0:19857
+    initial_position: [1.0, 2.0, 0.0]
+    type: cf_sim  # see robot_types
 
   # cf_9:
   #   enabled: true
@@ -177,10 +177,10 @@ robot_types:
       enabled: true
       default_topics:
         pose:
-          frequency: 100
+          frequency: 50
       custom_topics:
         velocity:
-          frequency: 100
+          frequency: 50
           vars: ["kalman.statePX", "kalman.statePY", "kalman.statePZ"]
 
   cf:
@@ -250,10 +250,10 @@ all:
       controller: 1 # 1: PID, 2: mellinger
     # pid_attitude:
     #   roll_kp: 10
-    #   roll_ki: 6.05
+    #   roll_ki: 0
     #   roll_kd: 0
     #   pitch_kp: 10
-    #   pitch_ki: 6.05
+    #   pitch_ki: 0
     #   pitch_kd: 0
     # pid_rate:
     #   roll_kp: 500
@@ -262,7 +262,7 @@ all:
     #   pitch_kp: 500
     #   pitch_ki: 500
     #   pitch_kd: 3.6
-      # rateFiltEn: 1
+    #   rateFiltEn: 1
     # ring:
     #   effect: 16 # 6: double spinner, 7: solid color, 16: packetRate
     #   solidBlue: 255 # if set to solid color
