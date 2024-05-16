@@ -21,6 +21,7 @@
 #include "crazyflie_interfaces/msg/full_state.hpp"
 #include "crazyflie_interfaces/msg/position.hpp"
 #include "crazyflie_interfaces/msg/log_data_generic.hpp"
+#include "crazyflie_interfaces/msg/attitude_setpoint.hpp"
 
 using std::placeholders::_1;
 using std::placeholders::_2;
@@ -129,6 +130,7 @@ public:
     subscription_cmd_vel_legacy_ = node->create_subscription<geometry_msgs::msg::Twist>(name + "/cmd_vel_legacy", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieROS::cmd_vel_legacy_changed, this, _1));
     subscription_cmd_full_state_ = node->create_subscription<crazyflie_interfaces::msg::FullState>(name + "/cmd_full_state", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieROS::cmd_full_state_changed, this, _1));
     subscription_cmd_position_ = node->create_subscription<crazyflie_interfaces::msg::Position>(name + "/cmd_position", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieROS::cmd_position_changed, this, _1));
+    subscription_cmd_attitude_setpoint_ = node->create_subscription<crazyflie_interfaces::msg::AttitudeSetpoint>(name + "/cmd_attitude_setpoint", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieROS::cmd_attitude_setpoint_changed, this, _1));
 
     auto start = std::chrono::system_clock::now();
 
@@ -462,6 +464,14 @@ private:
 
   }
 
+  void cmd_attitude_setpoint_changed(const crazyflie_interfaces::msg::AttitudeSetpoint::SharedPtr msg) {
+    float roll = msg->roll;
+    float pitch = msg->pitch;
+    float yaw = msg->yaw_rate;
+    float thrust = msg->thrust;
+    cf_.sendSetpoint(roll, pitch, yaw, thrust);
+  }
+
   void cmd_position_changed(const crazyflie_interfaces::msg::Position::SharedPtr msg) {
     float x = msg->x;
     float y = msg->y;
@@ -687,6 +697,7 @@ private:
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr subscription_cmd_vel_legacy_;
   rclcpp::Subscription<crazyflie_interfaces::msg::FullState>::SharedPtr subscription_cmd_full_state_;
   rclcpp::Subscription<crazyflie_interfaces::msg::Position>::SharedPtr subscription_cmd_position_;
+  rclcpp::Subscription<crazyflie_interfaces::msg::AttitudeSetpoint>::SharedPtr subscription_cmd_attitude_setpoint_;
 
   // logging
   std::unique_ptr<LogBlock<logPose>> log_block_pose_;
