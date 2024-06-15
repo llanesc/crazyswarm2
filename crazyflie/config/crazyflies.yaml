@@ -11,11 +11,18 @@ robots:
   #   #   kalman:
   #   #     pNAcc_xy: 1.0 # default 0.5
 
+  # cf_1:
+  #   enabled: true
+  #   uri: radio://0/80/2M/E7E7E7E7E0
+  #   initial_position: [0.0, 0.0, 0.0]
+  #   type: cf  # see robot_types
+
   cf_1:
     enabled: true
     uri: udp://0.0.0.0:19850
     initial_position: [0.0, 0.0, 0.0]
     type: cf_sim  # see robot_types
+
 
   cf_2:
     enabled: false
@@ -189,7 +196,7 @@ robot_types:
     motion_capture:
       enabled: true
       # only if enabled; see motion_capture.yaml
-      marker: cf_mpc
+      marker: default
       dynamics: default
     big_quad: false
     battery:
@@ -249,7 +256,7 @@ all:
       enHighLevel: 1
     stabilizer:
       estimator: 2 # 1: complementary, 2: kalman
-      controller: 2 # 1: PID, 2: mellinger
+      controller: 1 # 1: PID, 2: mellinger
     flightmode:
       stabModeRoll: 0
       stabModePitch: 0
