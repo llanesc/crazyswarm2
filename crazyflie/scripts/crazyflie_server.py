@@ -26,7 +26,7 @@ from cflib.crazyflie.mem import Poly4D
 from crazyflie_interfaces.srv import Takeoff, Land, GoTo, RemoveLogging, AddLogging
 from crazyflie_interfaces.srv import UploadTrajectory, StartTrajectory, NotifySetpointsStop
 from rcl_interfaces.msg import ParameterDescriptor, SetParametersResult, ParameterType
-from crazyflie_interfaces.msg import Status, Hover, LogDataGeneric, FullState
+from crazyflie_interfaces.msg import Status, Hover, LogDataGeneric, FullState, AttitudeSetpoint
 from motion_capture_tracking_interfaces.msg import NamedPoseArray
 
 from std_srvs.srv import Empty
@@ -266,6 +266,10 @@ class CrazyflieServer(Node):
                 Twist, name +
                 "/cmd_vel_legacy", partial(self._cmd_vel_legacy_changed,
                                            uri=uri), 10
+            )
+            self.create_subscription(
+                AttitudeSetpoint, name +
+                "/cmd_attitude", partial(self._cmd_attitude_changed, uri=uri), 10
             )
             self.create_subscription(
                 Hover, name +
@@ -977,6 +981,18 @@ class CrazyflieServer(Node):
         pitch = -msg.linear.x
         yawrate = msg.angular.z
         thrust = int(min(max(msg.linear.z, 0, 0), 60000))
+        self.swarm._cfs[uri].cf.commander.send_setpoint(
+            roll, pitch, yawrate, thrust)
+        
+    def _cmd_attitude_changed(self, msg, uri=""):
+        """
+        Topic update callback to control the attitude and thrust
+            of the crazyflie
+        """
+        roll = degrees(msg.roll)
+        pitch = degrees(msg.pitch)
+        yawrate = -1.0*degrees(msg.yaw_rate)
+        thrust = int(min(max(msg.thrust, 0, 0), 60000))
         self.swarm._cfs[uri].cf.commander.send_setpoint(
             roll, pitch, yawrate, thrust)
 

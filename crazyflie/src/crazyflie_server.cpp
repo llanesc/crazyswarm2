@@ -21,10 +21,15 @@
 #include "crazyflie_interfaces/srv/upload_trajectory.hpp"
 #include "motion_capture_tracking_interfaces/msg/named_pose_array.hpp"
 #include "crazyflie_interfaces/msg/full_state.hpp"
+#include "crazyflie_interfaces/msg/attitude_setpoint.hpp"
 #include "crazyflie_interfaces/msg/position.hpp"
 #include "crazyflie_interfaces/msg/status.hpp"
 #include "crazyflie_interfaces/msg/log_data_generic.hpp"
 #include "crazyflie_interfaces/msg/connection_statistics_array.hpp"
+
+#define PI 3.14159265358979323846
+#define RADIANS(deg) (deg) * PI / 180.0
+#define DEGREES(rad) (rad) * 180.0 / PI
 
 using std::placeholders::_1;
 using std::placeholders::_2;
@@ -168,6 +173,7 @@ public:
     // Topics
 
     subscription_cmd_vel_legacy_ = node->create_subscription<geometry_msgs::msg::Twist>(name + "/cmd_vel_legacy", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieROS::cmd_vel_legacy_changed, this, _1), sub_opt_cf_cmd);
+    subscription_cmd_attitude_ = node->create_subscription<crazyflie_interfaces::msg::AttitudeSetpoint>(name + "/cmd_attitude", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieROS::cmd_attitude_changed, this, _1), sub_opt_cf_cmd);
     subscription_cmd_full_state_ = node->create_subscription<crazyflie_interfaces::msg::FullState>(name + "/cmd_full_state", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieROS::cmd_full_state_changed, this, _1), sub_opt_cf_cmd);
     subscription_cmd_position_ = node->create_subscription<crazyflie_interfaces::msg::Position>(name + "/cmd_position", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieROS::cmd_position_changed, this, _1), sub_opt_cf_cmd);
 
@@ -582,6 +588,15 @@ private:
 
   }
 
+  void cmd_attitude_changed(const crazyflie_interfaces::msg::AttitudeSetpoint::SharedPtr msg)
+  {
+    float roll = DEGREES(msg->roll);
+    float pitch = DEGREES(msg->pitch);
+    float yawrate = -1.0 * DEGREES(msg->yaw_rate);
+    uint16_t thrust = std::min<uint16_t>(std::max<float>(msg->thrust, 0.0), 60000);
+    cf_.sendSetpoint(roll, pitch, yawrate, thrust);
+  }
+
   void cmd_position_changed(const crazyflie_interfaces::msg::Position::SharedPtr msg) {
     float x = msg->x;
     float y = msg->y;
@@ -934,6 +949,7 @@ private:
   rclcpp::Service<NotifySetpointsStop>::SharedPtr service_notify_setpoints_stop_;
   rclcpp::Service<Arm>::SharedPtr service_arm_;
 
+  rclcpp::Subscription<crazyflie_interfaces::msg::AttitudeSetpoint>::SharedPtr subscription_cmd_attitude_;
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr subscription_cmd_vel_legacy_;
   rclcpp::Subscription<crazyflie_interfaces::msg::FullState>::SharedPtr subscription_cmd_full_state_;
   rclcpp::Subscription<crazyflie_interfaces::msg::Position>::SharedPtr subscription_cmd_position_;
