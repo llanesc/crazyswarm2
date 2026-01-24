@@ -949,10 +949,14 @@ private:
       previous_stats_unicast_ = statsUc;
 
       // connection sent stats (broadcast)
-      const auto statsBc = cfbc_->connectionStats();
-      size_t deltaTxBc = statsBc.sent_count - previous_stats_broadcast_.sent_count;
-      msg.num_tx_broadcast = deltaTxBc;
-      previous_stats_broadcast_ = statsBc;
+      if (cfbc_) {
+        const auto statsBc = cfbc_->connectionStats();
+        size_t deltaTxBc = statsBc.sent_count - previous_stats_broadcast_.sent_count;
+        msg.num_tx_broadcast = deltaTxBc;
+        previous_stats_broadcast_ = statsBc;
+      } else {
+        msg.num_tx_broadcast = 0;
+      }
 
       msg.latency_unicast = last_latency_in_ms_;
 
@@ -1197,8 +1201,13 @@ public:
         if (constr == "crazyflie") {
           std::string uri = parameter_overrides.at("robots." + name + ".uri").get<std::string>();
           auto broadcastUri = Crazyflie::broadcastUriFromUnicastUri(uri);
-          if (broadcaster_.count(broadcastUri) == 0) {
-            broadcaster_.emplace(broadcastUri, std::make_unique<CrazyflieBroadcaster>(broadcastUri));
+
+          CrazyflieBroadcaster* cfbc_ptr = nullptr;
+          if (!broadcastUri.empty()) {
+            if (broadcaster_.count(broadcastUri) == 0) {
+              broadcaster_.emplace(broadcastUri, std::make_unique<CrazyflieBroadcaster>(broadcastUri));
+            }
+            cfbc_ptr = broadcaster_.at(broadcastUri).get();
           }
 
           crazyflies_.emplace(name, std::make_unique<CrazyflieROS>(
@@ -1208,9 +1217,11 @@ public:
             this,
             callback_group_cf_cmd_,
             callback_group_cf_srv_,
-            broadcaster_.at(broadcastUri).get()));
+            cfbc_ptr));
 
-          update_name_to_id_map(name, crazyflies_[name]->id());
+          if (cfbc_ptr) {
+            update_name_to_id_map(name, crazyflies_[name]->id());
+          }
         }
         else if (constr == "none") {
           // we still might want to track this object, so update our map
