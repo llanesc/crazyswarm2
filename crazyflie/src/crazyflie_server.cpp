@@ -173,6 +173,7 @@ public:
       cf_logger_,
       std::bind(&CrazyflieROS::on_console, this, std::placeholders::_1))
     , name_(name)
+    , is_udp_(link_uri.substr(0, 6) == "udp://")
     , node_(node)
     , tf_broadcaster_(node)
     , last_on_latency_(std::chrono::steady_clock::now())
@@ -977,24 +978,26 @@ private:
 
       publisher_status_->publish(msg);
 
-      // warnings
-      if (msg.num_rx_unicast > msg.num_tx_unicast * 1.05 /*allow some slack*/) {
-        RCLCPP_WARN(logger_, "[%s] Unexpected number of unicast packets. Sent: %d. Received: %d", name_.c_str(), msg.num_tx_unicast, msg.num_rx_unicast);
-      }
-      if (msg.num_tx_unicast > 0) {
-        float unicast_receive_rate = msg.num_rx_unicast / (float)msg.num_tx_unicast;
-        if (unicast_receive_rate < min_unicast_receive_rate_) {
-          RCLCPP_WARN(logger_, "[%s] Low unicast receive rate (%.2f < %.2f). Sent: %d. Received: %d", name_.c_str(), unicast_receive_rate, min_unicast_receive_rate_, msg.num_tx_unicast, msg.num_rx_unicast);
+      // warnings (radio stats are not meaningful for UDP connections)
+      if (!is_udp_) {
+        if (msg.num_rx_unicast > msg.num_tx_unicast * 1.05 /*allow some slack*/) {
+          RCLCPP_WARN(logger_, "[%s] Unexpected number of unicast packets. Sent: %d. Received: %d", name_.c_str(), msg.num_tx_unicast, msg.num_rx_unicast);
         }
-      }
+        if (msg.num_tx_unicast > 0) {
+          float unicast_receive_rate = msg.num_rx_unicast / (float)msg.num_tx_unicast;
+          if (unicast_receive_rate < min_unicast_receive_rate_) {
+            RCLCPP_WARN(logger_, "[%s] Low unicast receive rate (%.2f < %.2f). Sent: %d. Received: %d", name_.c_str(), unicast_receive_rate, min_unicast_receive_rate_, msg.num_tx_unicast, msg.num_rx_unicast);
+          }
+        }
 
-      if (msg.num_rx_broadcast > msg.num_tx_broadcast * 1.05 /*allow some slack*/) {
-        RCLCPP_WARN(logger_, "[%s] Unexpected number of broadcast packets. Sent: %d. Received: %d", name_.c_str(), msg.num_tx_broadcast, msg.num_rx_broadcast);
-      }
-      if (msg.num_tx_broadcast > 0) {
-        float broadcast_receive_rate = msg.num_rx_broadcast / (float)msg.num_tx_broadcast;
-        if (broadcast_receive_rate < min_broadcast_receive_rate_) {
-          RCLCPP_WARN(logger_, "[%s] Low broadcast receive rate (%.2f < %.2f). Sent: %d. Received: %d", name_.c_str(), broadcast_receive_rate, min_broadcast_receive_rate_, msg.num_tx_broadcast, msg.num_rx_broadcast);
+        if (msg.num_rx_broadcast > msg.num_tx_broadcast * 1.05 /*allow some slack*/) {
+          RCLCPP_WARN(logger_, "[%s] Unexpected number of broadcast packets. Sent: %d. Received: %d", name_.c_str(), msg.num_tx_broadcast, msg.num_rx_broadcast);
+        }
+        if (msg.num_tx_broadcast > 0) {
+          float broadcast_receive_rate = msg.num_rx_broadcast / (float)msg.num_tx_broadcast;
+          if (broadcast_receive_rate < min_broadcast_receive_rate_) {
+            RCLCPP_WARN(logger_, "[%s] Low broadcast receive rate (%.2f < %.2f). Sent: %d. Received: %d", name_.c_str(), broadcast_receive_rate, min_broadcast_receive_rate_, msg.num_tx_broadcast, msg.num_rx_broadcast);
+          }
         }
       }
     }
@@ -1065,6 +1068,7 @@ private:
   Crazyflie cf_;
   std::string message_buffer_;
   std::string name_;
+  bool is_udp_;
 
   rclcpp::Node* node_;
   tf2_ros::TransformBroadcaster tf_broadcaster_;
