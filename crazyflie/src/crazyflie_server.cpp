@@ -645,7 +645,7 @@ private:
   void cmd_attitude_changed(const crazyflie_interfaces::msg::AttitudeSetpoint::SharedPtr msg)
   {
     float roll = DEGREES(msg->roll);
-    float pitch = DEGREES(msg->pitch);
+    float pitch = -DEGREES(msg->pitch);
     float yawrate = DEGREES(msg->yaw_rate);
     uint16_t thrust = std::min<uint16_t>(std::max<float>(msg->thrust, 0.0), 60000);
     cf_.sendSetpoint(roll, pitch, yawrate, thrust);
@@ -905,7 +905,8 @@ private:
     if (publisher_odom_) {
       nav_msgs::msg::Odometry msg;
       msg.header.stamp = node_->get_clock()->now();
-      msg.header.frame_id = name_;
+      msg.header.frame_id = reference_frame_;
+      msg.child_frame_id = name_;
       msg.pose.pose.position.x = data->x / 1000.0f;
       msg.pose.pose.position.y = data->y / 1000.0f;
       msg.pose.pose.position.z = data->z / 1000.0f;
@@ -925,6 +926,19 @@ private:
       //msg.twist.twist.angular.z = data->rateYaw / 1000.0f;
 
       publisher_odom_->publish(msg);
+
+      // send a transform for this odom
+      geometry_msgs::msg::TransformStamped transform;
+      transform.header = msg.header;
+      transform.child_frame_id = name_;
+      transform.transform.translation.x = data->x / 1000.0f;
+      transform.transform.translation.y = data->y / 1000.0f;
+      transform.transform.translation.z = data->z / 1000.0f;
+      transform.transform.rotation.x = q[0];
+      transform.transform.rotation.y = q[1];
+      transform.transform.rotation.z = q[2];
+      transform.transform.rotation.w = q[3];
+      tf_broadcaster_.sendTransform(transform);
     }
 
   }
